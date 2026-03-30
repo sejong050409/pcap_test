@@ -1,5 +1,3 @@
-#ifndef HEADERS_H
-#define HEADERS_H
 #include <stdint.h>
 
 typedef struct{
@@ -32,5 +30,3 @@ typedef struct{
 	uint16_t checksum;
 	uint16_t urgent;
 } tcp_header;
-
-#endif
