@@ -67,13 +67,10 @@ int main(int argc, char* argv[]) {
 		if(ntohs(ethernet.ethertype) != 0x0800)
 			continue;
 
-		print_mac(ethernet.src_mac);
-		printf(" -> ");
-		print_mac(ethernet.dst_mac);
-		printf(", ");
-
 		memcpy(&ip, packet + 14, sizeof(ip_header));
 
+		if(ip.protocol != 6)
+			continue;
 
 		int ip_header_len = (ip.ver_ihl & 0x0F) * 4;
 
@@ -81,14 +78,18 @@ int main(int argc, char* argv[]) {
 
 		int tcp_header_len = ((tcp.offset_reserved >> 4) & 0x0F) * 4;
 
+		print_mac(ethernet.src_mac);
+		printf(" -> ");
+		print_mac(ethernet.dst_mac);
+		printf(", ");
+
 		print_ip(ip.src_ip);
 		printf(":%u", ntohs(tcp.src_port));
 		printf(" -> ");
 		print_ip(ip.dst_ip);
 		printf(":%u", ntohs(tcp.dst_port));
+		printf("\n");
 
-		if(ip.protocol != 6)
-			continue;
 		const u_char* payload = packet + 14 + ip_header_len + tcp_header_len;
 
 		int payload_len = header->caplen - (14 + ip_header_len + tcp_header_len);
@@ -97,7 +98,6 @@ int main(int argc, char* argv[]) {
 
 		int print_len = payload_len > 20 ? 20 : payload_len;
 
-		printf("\n");
 		if(print_len == 0){
 			printf("-");
 		}
