@@ -70,6 +70,7 @@ int main(int argc, char* argv[]) {
 		print_mac(ethernet.src_mac);
 		printf(" -> ");
 		print_mac(ethernet.dst_mac);
+		printf(", ");
 
 		memcpy(&ip, packet + 14, sizeof(ip_header));
 
@@ -81,10 +82,10 @@ int main(int argc, char* argv[]) {
 		int tcp_header_len = ((tcp.offset_reserved >> 4) & 0x0F) * 4;
 
 		print_ip(ip.src_ip);
-		printf("%u", ntohs(tcp.src_port));
+		printf(":%u", ntohs(tcp.src_port));
 		printf(" -> ");
 		print_ip(ip.dst_ip);
-		printf("%u", ntohs(tcp.dst_port));
+		printf(":%u", ntohs(tcp.dst_port));
 
 		if(ip.protocol != 6)
 			continue;
@@ -96,9 +97,17 @@ int main(int argc, char* argv[]) {
 
 		int print_len = payload_len > 20 ? 20 : payload_len;
 
-		for(int i = 0; i < print_len; i++) {
-			printf("%02x ", payload[i]);
+		printf("\n");
+		if(print_len == 0){
+			printf("-");
 		}
+		else{
+			for(int i = 0; i < print_len; i++) {
+				printf("%02x|", payload[i]);
+			}
+		}
+		printf("\n");
+		printf("======================================================================");
 		printf("\n");
 	}
 
